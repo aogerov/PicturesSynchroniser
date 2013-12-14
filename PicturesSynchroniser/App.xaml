@@ -1,0 +1,34 @@
+﻿<Application
+    x:Class="PicturesSynchroniser.App"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:PicturesSynchroniser"
+    xmlns:common="using:PicturesSynchroniser.Common">
+
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+
+                <!-- 
+                    Styles that define common aspects of the platform look and feel
+                    Required by Visual Studio project and item templates
+                 -->
+                <ResourceDictionary Source="Common/StandardStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <x:String x:Key="AppName">Pictures Synchronizer</x:String>
+            <common:BooleanToVisibilityConverter x:Key="boolToVisibilityConverter"/>
+            <common:BooleanToErrorColorConverter x:Key="boolToErrorColorConverter"/>
+            <common:BooleanToReadyColorConverter x:Key="boolToReadyColorConverter"/>
+            <common:ViewTypeToColorConverter x:Key="viewTypeToColorConverter"/>
+
+            <Style x:Key="HomeButtonStyle" TargetType="ButtonBase" BasedOn="{StaticResource AppBarButtonStyle}">
+                <Setter Property="AutomationProperties.AutomationId" Value="HomeButton"/>
+                <Setter Property="Content" Value="&#xE10F;"/>
+                <Setter Property="Width" Value="Auto"/>
+                <Setter Property="Height" Value="Auto"/>
+                <Setter Property="Margin" Value="10,5,-30,7"/>
+                <Setter Property="VerticalAlignment" Value="Bottom"/>
+            </Style>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

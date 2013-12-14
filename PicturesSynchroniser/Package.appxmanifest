@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Package xmlns="http://schemas.microsoft.com/appx/2010/manifest">
+  <Identity Name="c26a3d7c-0226-487f-b347-649adc195dc3" Publisher="CN=Gercho" Version="1.0.0.7" />
+  <Properties>
+    <DisplayName>PicturesSynchroniser</DisplayName>
+    <PublisherDisplayName>Gercho</PublisherDisplayName>
+    <Logo>Assets\50x50.png</Logo>
+  </Properties>
+  <Prerequisites>
+    <OSMinVersion>6.2.1</OSMinVersion>
+    <OSMaxVersionTested>6.2.1</OSMaxVersionTested>
+  </Prerequisites>
+  <Resources>
+    <Resource Language="x-generate" />
+  </Resources>
+  <Applications>
+    <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="PicturesSynchroniser.App">
+      <VisualElements DisplayName="PicturesSynchroniser" Logo="Assets\150x150.png" SmallLogo="Assets\30x30.png" Description="PicturesSynchroniser" ForegroundText="light" BackgroundColor="#464646" ToastCapable="true">
+        <DefaultTile ShowName="allLogos" ShortName="Pictures Synchroniser" WideLogo="Assets\310x150.png" />
+        <SplashScreen Image="Assets\620x300.png" />
+      </VisualElements>
+      <Extensions>
+        <Extension Category="windows.search" />
+      </Extensions>
+    </Application>
+  </Applications>
+  <Capabilities>
+    <Capability Name="removableStorage" />
+    <Capability Name="picturesLibrary" />
+    <Capability Name="internetClient" />
+    <DeviceCapability Name="location" />
+    <DeviceCapability Name="webcam" />
+  </Capabilities>
+</Package>

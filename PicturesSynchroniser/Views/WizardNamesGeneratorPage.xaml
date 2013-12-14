@@ -1,0 +1,227 @@
+﻿<bm:BaseView
+    x:Name="pageRoot"
+    x:Class="PicturesSynchroniser.Views.WizardNamesGeneratorPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:bm="using:PicturesSynchroniser.BaseModels"
+    xmlns:local="using:PicturesSynchroniser.Views"
+    xmlns:common="using:PicturesSynchroniser.Common"
+    xmlns:viewModels="using:PicturesSynchroniser.ViewModels"
+    mc:Ignorable="d">
+
+    <Page.DataContext>
+        <viewModels:WizardNamesGeneratorViewModel/>
+    </Page.DataContext>
+
+    <Page.Resources>
+        <Style TargetType="Page">
+            <Setter Property="FontSize" Value="20"/>
+        </Style>
+        <Style TargetType="TextBlock">
+            <Setter Property="FontSize" Value="20"/>
+            <Setter Property="Margin" Value="15,0,5,0"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+        <Style TargetType="ComboBox">
+            <Setter Property="Width" Value="150"/>
+        </Style>
+    </Page.Resources>
+
+    <!--
+        This grid acts as a root panel for the page that defines two rows:
+        * Row 0 contains the back button and page title
+        * Row 1 contains the rest of the page layout
+    -->
+    <Grid Style="{StaticResource LayoutRootStyle}">
+        <Grid.Background>
+            <ImageBrush ImageSource="ms-appx:///Assets/background.jpg" Stretch="UniformToFill"/>
+        </Grid.Background>
+        <Grid>
+            <Grid.Background>
+                <SolidColorBrush Color="{Binding ThemeColor, Mode=TwoWay}"/>
+            </Grid.Background>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="140"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="120"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Back button and page title -->
+            <Grid Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Button x:Name="homeButton" Grid.Column="0" IsEnabled="{Binding IsAllLoaded}" Command="{Binding NavigateToHome}" Style="{StaticResource HomeButtonStyle}"/>
+                <Button x:Name="backButton" Grid.Column="1" IsEnabled="{Binding IsAllLoaded}" Command="{Binding NavigateBack}" Style="{StaticResource BackButtonStyle}"/>
+                <TextBlock x:Name="pageTitle" Grid.Column="2" Text="{StaticResource AppName}" Style="{StaticResource PageHeaderTextStyle}"/>
+            </Grid>
+
+            <Grid Grid.Row="1" Grid.Column="1" Name="GridTop">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="160"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Row="0" Orientation="Horizontal">
+                    <StackPanel>
+                        <TextBlock Text="File Names Template" FontSize="22" Margin="25,0,5,0"/>
+                        <StackPanel Margin="10" Orientation="Horizontal">
+                            <TextBlock Text="Keyword:"/>
+                            <TextBox MinWidth="150"
+                                 Background="{Binding Path=FileNameTemplate.KeywordColor, Mode=TwoWay}"
+                                 Text="{Binding Path=FileNameTemplate.Keyword, Mode=TwoWay}"/>
+                            <TextBlock Text="Day:"/>
+                            <ComboBox Background="{Binding Path=FileNameTemplate.DayColor, Mode=TwoWay}"
+                                  ItemsSource="{Binding Path=FileNameTemplate.FileNameStrings.Day}"
+                                  SelectedValue="{Binding Path=FileNameTemplate.DayIncluded, Mode=TwoWay}"/>
+                            <TextBlock Text="Date:"/>
+                            <ComboBox Background="{Binding Path=FileNameTemplate.DateColor, Mode=TwoWay}"
+                                  ItemsSource="{Binding Path=FileNameTemplate.FileNameStrings.Date}"
+                                  SelectedValue="{Binding Path=FileNameTemplate.DateIncluded, Mode=TwoWay}"/>
+                            <TextBlock Text="Time:"/>
+                            <ComboBox Background="{Binding Path=FileNameTemplate.TimeColor, Mode=TwoWay}"
+                                  ItemsSource="{Binding Path=FileNameTemplate.FileNameStrings.TimeWithoutMiliseconds}"
+                                  SelectedValue="{Binding Path=FileNameTemplate.TimeIncluded, Mode=TwoWay}"/>
+                            <TextBlock Text="Enumeration:"/>
+                            <ComboBox Background="{Binding Path=FileNameTemplate.EnumerationColor, Mode=TwoWay}"
+                                  ItemsSource="{Binding Path=FileNameTemplate.FileNameStrings.Enumeration}"
+                                  SelectedValue="{Binding Path=FileNameTemplate.EnumerationIncluded, Mode=TwoWay}"/>
+                        </StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="10">
+                            <TextBlock Text="File name exampe: "/>
+                            <TextBlock Text="{Binding Path=FileNameTemplate.FileNameExample, Mode=TwoWay}"/>
+                        </StackPanel>
+                    </StackPanel>
+                    <Button Content="Set New Names" Margin="50,0,0,0" Width="200" FontSize="18" 
+                            VerticalAlignment="Bottom" HorizontalAlignment="Right"
+                            Background="{Binding IsReadyToProceed, Converter={StaticResource boolToReadyColorConverter}}" 
+                            IsEnabled="{Binding IsAllLoaded}"
+                            Command="{Binding GeneratePicturesNames}"/>
+                </StackPanel>
+                <StackPanel Grid.Row="1">
+                    <StackPanel Margin="10" Orientation="Horizontal" VerticalAlignment="Center">
+                        <Image Source="/Assets/main_camera.png" Width="128" Height="128"/>
+                        <StackPanel  Orientation="Vertical" VerticalAlignment="Center">
+                            <TextBlock Margin="5" Text="Main Camera"/>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <TextBlock Margin="5" Text="Vendor:"/>
+                                <TextBlock Margin="5" Text="{Binding Path=MainCamera.CameraManufacturer, Mode=TwoWay}"/>
+                                <TextBlock Margin="5" Text="Model:"/>
+                                <TextBlock Margin="5" Text="{Binding Path=MainCamera.CameraModel, Mode=TwoWay}"/>
+                                <TextBlock Margin="5" Text="- "/>
+                                <TextBlock Margin="5" Text="{Binding Path=MainCamera.PicturesCountAsString, Mode=TwoWay}"/>
+                            </StackPanel>
+                            <TextBlock Margin="5" Text="Time of creation of the selected picture."/>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <TextBlock Margin="5" Text="Year:"/>
+                                <TextBlock Margin="5" Text="{Binding Path=MainCamera.Year, Mode=TwoWay}"/>
+                                <TextBlock Margin="5" Text="Month:"/>
+                                <TextBlock Margin="5" Text="{Binding Path=MainCamera.Month, Mode=TwoWay}"/>
+                                <TextBlock Margin="5" Text="Day:"/>
+                                <TextBlock Margin="5" Text="{Binding Path=MainCamera.Day, Mode=TwoWay}"/>
+                                <TextBlock Margin="5" Text="Hour:"/>
+                                <TextBlock Margin="5" Text="{Binding Path=MainCamera.Hour, Mode=TwoWay}"/>
+                                <TextBlock Margin="5" Text="Minute:"/>
+                                <TextBlock Margin="5" Text="{Binding Path=MainCamera.Minute, Mode=TwoWay}"/>
+                                <TextBlock Margin="5" Text="Second:"/>
+                                <TextBlock Margin="5" Text="{Binding Path=MainCamera.Second, Mode=TwoWay}"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </StackPanel>
+                    <Border BorderBrush="White" BorderThickness="1" Margin="0,5,120,5"/>
+                    <GridView ItemsSource="{Binding OtherCameras}" Height="600" SelectionMode="None" ScrollViewer.IsVerticalRailEnabled="True">
+                        <GridView.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <WrapGrid Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </GridView.ItemsPanel>
+                        <GridView.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Margin="10" Orientation="Horizontal" VerticalAlignment="Center">
+                                    <Image Source="/Assets/other_camera.png" Width="128" Height="128"/>
+                                    <StackPanel  Orientation="Vertical" VerticalAlignment="Center">
+                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                            <TextBlock Margin="5" FontSize="20" Text="Vendor:"/>
+                                            <TextBlock Margin="5" FontSize="20" Text="{Binding Path=CameraManufacturer, Mode=TwoWay}"/>
+                                            <TextBlock Margin="5" FontSize="20" Text="Model:"/>
+                                            <TextBlock Margin="5" FontSize="20" Text="{Binding Path=CameraModel, Mode=TwoWay}"/>
+                                            <TextBlock Margin="5" FontSize="20" Text="- "/>
+                                            <TextBlock Margin="5" FontSize="20" Text="{Binding Path=PicturesCountAsString, Mode=TwoWay}"/>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                            <TextBlock Margin="5" FontSize="20" Text="Time of creation of the selected picture -"/>
+                                            <TextBlock Margin="5" FontSize="20" Text="{Binding Path=FullDate, Mode=TwoWay}"/>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                            <TextBlock Margin="5" FontSize="20" VerticalAlignment="Center" Text="Years:"/>
+                                            <TextBox Margin="5" FontSize="20" VerticalAlignment="Center" Text="{Binding Path=YearDifference, Mode=TwoWay}"/>
+                                            <TextBlock Margin="5" FontSize="20" VerticalAlignment="Center" Text="Months:"/>
+                                            <TextBox Margin="5" FontSize="20" VerticalAlignment="Center" Text="{Binding Path=MonthDifference, Mode=TwoWay}"/>
+                                            <TextBlock Margin="5" FontSize="20" VerticalAlignment="Center" Text="Days:"/>
+                                            <TextBox Margin="5" FontSize="20" VerticalAlignment="Center" Text="{Binding Path=DayDifference, Mode=TwoWay}"/>
+                                            <TextBlock Margin="5" FontSize="20" VerticalAlignment="Center" Text="Hours:"/>
+                                            <TextBox Margin="5" FontSize="20" VerticalAlignment="Center" Text="{Binding Path=HourDifference, Mode=TwoWay}"/>
+                                            <TextBlock Margin="5" FontSize="20" VerticalAlignment="Center" Text="Minutes:"/>
+                                            <TextBox Margin="5" FontSize="20" VerticalAlignment="Center" Text="{Binding Path=MinuteDifference, Mode=TwoWay}"/>
+                                            <TextBlock Margin="5" FontSize="20" VerticalAlignment="Center" Text="Seconds:"/>
+                                            <TextBox Margin="5" FontSize="20" VerticalAlignment="Center" Text="{Binding Path=SecondDifference, Mode=TwoWay}"/>
+                                        </StackPanel>
+                                        <TextBlock Margin="5" FontSize="16" VerticalAlignment="Center" Text="Current creation time difference. Set custom time if needed."/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </DataTemplate>
+                        </GridView.ItemTemplate>
+                    </GridView>
+                </StackPanel>
+            </Grid>
+
+            <VisualStateManager.VisualStateGroups>
+
+                <!-- Visual states reflect the application's view state -->
+                <VisualStateGroup x:Name="ApplicationViewStates">
+                    <VisualState x:Name="FullScreenLandscape"/>
+                    <VisualState x:Name="Filled"/>
+
+                    <!-- The entire page respects the narrower 100-pixel margin convention for portrait -->
+                    <VisualState x:Name="FullScreenPortrait">
+                        <Storyboard>
+                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="backButton" Storyboard.TargetProperty="Style">
+                                <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource PortraitBackButtonStyle}"/>
+                            </ObjectAnimationUsingKeyFrames>
+                        </Storyboard>
+                    </VisualState>
+
+                    <!-- The back button and title have different styles when snapped -->
+                    <VisualState x:Name="Snapped">
+                        <Storyboard>
+                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="backButton" Storyboard.TargetProperty="Style">
+                                <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource SnappedBackButtonStyle}"/>
+                            </ObjectAnimationUsingKeyFrames>
+                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="pageTitle" Storyboard.TargetProperty="Style">
+                                <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource SnappedPageHeaderTextStyle}"/>
+                            </ObjectAnimationUsingKeyFrames>
+                        </Storyboard>
+                    </VisualState>
+                </VisualStateGroup>
+            </VisualStateManager.VisualStateGroups>
+        </Grid>
+    </Grid>
+
+    <Page.BottomAppBar>
+        <AppBar>
+            <StackPanel Orientation="Horizontal">
+                <Button Name="AddButton" Style="{StaticResource OpenFileAppBarButtonStyle}" 
+                        AutomationProperties.Name="Load New Pictures" Command="{Binding LoadPictures}"/>
+            </StackPanel>
+        </AppBar>
+    </Page.BottomAppBar>
+</bm:BaseView>
